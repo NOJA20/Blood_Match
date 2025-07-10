@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodMatch - Find Your Blood Buddy 🩺</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        .bounce {
+            animation: bounce 0.3s ease infinite alternate;
+        }
+        .bounce-disabled {
+            animation: none;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+        .tooltip {
+            position: relative;
+        }
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e40af;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #fef3c7, #fed7aa);
+        }
+        .about-bg {
+            background: linear-gradient(135deg, #e9d5ff, #c4b5fd);
+        }
+        .contact-bg {
+            background: linear-gradient(135deg, #a5f3fc, #7dd3fc);
+        }
+        .booking-bg {
+            background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
+        }
+        .education-bg {
+            background: linear-gradient(135deg, #fed7e2, #f9a8d4);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f472b6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-pink-500 text-white p-4 sticky top-0 shadow-lg z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold">BloodMatch 🩺</h1>
+            <ul class="flex space-x-6 text-lg">
+                <li><a href="#home" class="hover:text-yellow-300 transition duration-200">Home 🏠</a></li>
+                <li><a href="#about" class="hover:text-yellow-300 transition duration-200">About Us 😊</a></li>
+                <li><a href="#booking" class="hover:text-yellow-300 transition duration-200">Book a Test 📅</a></li>
+                <li><a href="#contact" class="hover:text-yellow-300 transition duration-200">Contact 📬</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="hero-bg min-h-screen flex flex-col items-center justify-center py-12">
+        <!-- Blood Group Checker -->
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-xl mb-12">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-pink-600">Find Your Blood Buddy! 🩸</h1>
+                <p class="text-gray-600 mt-2 text-lg">Pick your blood group to see matches & learn about mismatches! 😄</p>
+            </div>
+            <div class="mb-6">
+                <label for="bloodGroup" class="block text-gray-700 font-bold text-lg mb-2">Your Blood Group 🩺</label>
+                <select id="bloodGroup" class="w-full p-4 border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-lg">
+                    <option value="" disabled selected>Choose a blood group 🌟</option>
+                    <option value="A+">A+ 😊</option>
+                    <option value="A-">A- 😊</option>
+                    <option value="B+">B+ 😊</option>
+                    <option value="B-">B- 😊</option>
+                    <option value="AB+">AB+ 😊</option>
+                    <option value="AB-">AB- 😊</option>
+                    <option value="O+">O+ 😊</option>
+                    <option value="O-">O- 😊</option>
+                </select>
+            </div>
+            <button onclick="checkCompatibility()" class="w-full bg-pink-600 text-white p-4 rounded-xl font-bold text-lg hover:bg-pink-700 transition duration-300 bounce" data-tooltip="See your matches!">Check Matches! 🚀</button>
+            <div id="result" class="mt-8 text-gray-700 hidden fade-in">
+                <h2 class="text-2xl font-bold text-pink-600 mb-4">Your Blood Buddies 🩺</h2>
+                <div id="compatibleGroups" class="bg-pink-50 p-4 rounded-xl text-lg">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Blood Group</th>
+                                <th>Can Receive</th>
+                                <th>Can Donate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compatibilityTable"></tbody>
+                    </table>
+                </div>
+                <p id="donorInfo" class="mt-4 text-sm text-gray-600 italic"></p>
+                <div id="mismatchInfo" class="mt-4 bg-yellow-50 p-4 rounded-xl text-lg">
+                    <h3 class="text-lg font-bold text-yellow-600">Why Mismatches Matter ⚠️</h3>
+                    <p class="text-gray-600">Mismatched blood types can cause issues, especially in pregnancy or transfusions. For example, if partners have different Rh factors (like Rh+ and Rh-), it might lead to <strong>Rh incompatibility</strong> in pregnancy, which can affect the baby. Talk to a doctor for advice! 🩺</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hospital Booking Prompt -->
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-xl mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-blue-600">Don’t Know Your Blood Type? 🤔</h2>
+                <p class="text-gray-600 mt-2 text-lg">Book a session with a hospital to find out! 🏥</p>
+            </div>
+            <a href="#booking" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition duration-300 bounce inline-block text-center" data-tooltip="Go to booking page!">Book Now! 📅</a>
+        </div>
+
+        <!-- Learn About Blood Types Section -->
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-xl">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-pink-600">Learn About Blood Types 📚</h2>
+                <p class="text-gray-600 mt-2 text-lg">Understand blood types and why matching matters! 🩺</p>
+            </div>
+            <div class="text-gray-700 text-lg leading-relaxed">
+                <h3 class="text-xl font-bold text-pink-600 mb-2">What Are Blood Types?</h3>
+                <p class="mb-4">Blood types are determined by antigens on red blood cells, classified into A, B, AB, and O, with an Rh factor (positive or negative). These determine compatibility for transfusions and medical procedures. Knowing your blood type ensures safe donations and treatments.</p>
+                <h3 class="text-xl font-bold text-pink-600 mb-2">Risks of Mismatched Blood</h3>
+                <p class="mb-4">Transfusing incompatible blood types can lead to serious complications, such as:</p>
+                <ul class="list-disc list-inside mb-4">
+                    <li><strong>Hemolytic Transfusion Reaction:</strong> The body’s immune system attacks mismatched blood, causing fever, chills, organ damage, or, in severe cases, life-threatening conditions.</li>
+                    <li><strong>Rh Incompatibility in Pregnancy:</strong> If a mother is Rh-negative and the baby is Rh-positive, the mother’s immune system may produce antibodies that harm the baby, potentially causing anemia or miscarriage.</li>
+                </ul>
+                <p>Always consult healthcare professionals to confirm blood type compatibility before transfusions or during pregnancy to prevent these risks. 🩺</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking-bg min-h-screen flex items-center justify-center py-12">
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:shadow-xl">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold text-green-600">Book Your Blood Test! 🩺</h2>
+                <p class="text-gray-600 mt-2 text-lg">Fill in your details to schedule a blood type test! 😄</p>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label for="bookingName" class="block text-gray-700 font-bold text-lg mb-2">Your Name 😊</label>
+                    <input type="text" id="bookingName" class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Your Name">
+                </div>
+                <div>
+                    <label for="bookingEmail" class="block text-gray-700 font-bold text-lg mb-2">Your Email 📧</label>
+                    <input type="email" id="bookingEmail" class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Your Email">
+                </div>
+                <div>
+                    <label for="bookingPhone" class="block text-gray-700 font-bold text-lg mb-2">Your Phone 📞</label>
+                    <input type="tel" id="bookingPhone" class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Your Phone Number">
+                </div>
+                <div>
+                    <label for="bookingDate" class="block text-gray-700 font-bold text-lg mb-2">Preferred Date 📅</label>
+                    <input type="date" id="bookingDate" class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                <div>
+                    <label for="hospital" class="block text-gray-700 font-bold text-lg mb-2">Choose a Hospital 🏥</label>
+                    <select id="hospital" class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-lg">
+                        <option value="" disabled selected>Pick a hospital 🌟</option>
+                        <option value="City General Hospital">City General Hospital</option>
+                        <option value="Sunshine Medical Center">Sunshine Medical Center</option>
+                        <option value="Hope Clinic">Hope Clinic</option>
+                    </select>
+                </div>
+                <button id="bookingButton" onclick="submitBooking()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold text-lg hover:bg-green-700 transition duration-300 bounce" data-tooltip="Confirm your booking!">Confirm Booking! 🎉</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="about-bg min-h-screen flex items-center justify-center py-12">
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-3xl">
+            <h2 class="text-4xl font-bold text-purple-600 text-center mb-6">About Us 😊</h2>
+            <p class="text-gray-600 text-lg leading-relaxed mb-4">
+                Hey there! Welcome to BloodMatch! We’re here to make blood donation and transfusion super fun and easy! 🎉 Our tool helps you find your blood group matches and learn why they matter, especially for things like pregnancy. 🩺
+            </p>
+            <p class="text-gray-600 text-lg leading-relaxed">
+                Our team is a bunch of happy folks who love using tech to help people. 🌍 We made this site as friendly as a big hug, so everyone can use it with a smile! 😄
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-bg min-h-screen flex items-center justify-center py-12">
+        <div class="bg-white bg-opacity-95 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <h2 class="text-4xl font-bold text-blue-600 text-center mb-6">Contact Us 📬</h2>
+            <p class="text-gray-600 text-lg text-center mb-6">Got questions? Send us a message! 😊</p>
+            <div class="space-y-6">
+                <div>
+                    <label for="name" class="block text-gray-700 font-bold text-lg mb-2">Name 🌟</label>
+                    <input type="text" id="name" class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Name">
+                </div>
+                <div>
+                    <label for="email" class="block text-gray-700 font-bold text-lg mb-2">Email 📧</label>
+                    <input type="email" id="email" class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Email">
+                </div>
+                <div>
+                    <label for="message" class="block text-gray-700 font-bold text-lg mb-2">Message 💬</label>
+                    <textarea id="message" class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="What's on your mind?"></textarea>
+                </div>
+                <button onclick="alert('Yay! Your message is sent! We’ll reply soon! 😄')" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition duration-300 bounce" data-tooltip="Send your message!">Send Message! 🎉</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-pink-500 text-white p-6 text-center">
+        <p class="text-lg">©️ 2025 BloodMatch. Made with ❤️ for everyone!</p>
+    </footer>
+
+    <script>
+        function checkCompatibility() {
+            const bloodGroup = document.getElementById('bloodGroup').value;
+            const resultDiv = document.getElementById('result');
+            const compatibilityTable = document.getElementById('compatibilityTable');
+            const donorInfo = document.getElementById('donorInfo');
+
+            if (!bloodGroup) {
+                alert('Oops! Please pick a blood group! 😅');
+                return;
+            }
+
+            const compatibility = {
+                'A+': { receive: ['A+', 'A-', 'O+', 'O-'], donate: ['A+', 'AB+'] },
+                'A-': { receive: ['A-', 'O-'], donate: ['A+', 'A-', 'AB+', 'AB-'] },
+                'B+': { receive: ['B+', 'B-', 'O+', 'O-'], donate: ['B+', 'AB+'] },
+                'B-': { receive: ['B-', 'O-'], donate: ['B+', 'B-', 'AB+', 'AB-'] },
+                'AB+': { receive: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], donate: ['AB+'] },
+                'AB-': { receive: ['A-', 'B-', 'AB-', 'O-'], donate: ['AB+', 'AB-'] },
+                'O+': { receive: ['O+', 'O-'], donate: ['A+', 'B+', 'AB+', 'O+'] },
+                'O-': { receive: ['O-'], donate: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] }
+            };
+
+            const matches = compatibility[bloodGroup];
+            let tableContent = '';
+            const allBloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+            allBloodGroups.forEach(group => {
+                const canReceive = matches.receive.includes(group) ? '✅ Yes' : '❌ No';
+                const canDonate = matches.donate.includes(group) ? '✅ Yes' : '❌ No';
+                tableContent += `<tr><td>${group} 😊</td><td>${canReceive}</td><td>${canDonate}</td></tr>`;
+            });
+
+            compatibilityTable.innerHTML = tableContent;
+            donorInfo.innerHTML = bloodGroup === 'O-' ? 'Wow! O- is the universal donor, helping everyone! 🌟' : bloodGroup === 'AB+' ? 'Cool! AB+ is the universal recipient, accepting all blood types! 🌟' : '';
+            resultDiv.classList.remove('hidden');
+        }
+
+        function submitBooking() {
+            const bookingName = document.getElementById('bookingName').value;
+            const bookingEmail = document.getElementById('bookingEmail').value;
+            const bookingPhone = document.getElementById('bookingPhone').value;
+            const bookingDate = document.getElementById('bookingDate').value;
+            const hospital = document.getElementById('hospital').value;
+            const bookingButton = document.getElementById('bookingButton');
+
+            if (!bookingName || !bookingEmail || !bookingPhone || !bookingDate || !hospital) {
+                alert('Oops! Please fill in all fields! 😅');
+                return;
+            }
+
+            bookingButton.textContent = 'Confirmed! 🎉';
+            bookingButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'bounce');
+            bookingButton.classList.add('bg-green-400', 'bounce-disabled', 'cursor-not-allowed');
+            bookingButton.disabled = true;
+            bookingButton.setAttribute('data-tooltip', 'Booking confirmed!');
+
+            alert(`Yay! Your blood test is booked with ${hospital} on ${bookingDate}! We’ll send a confirmation to ${bookingEmail} soon! 😄`);
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
